@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>DBTEC.cl - Login</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="../v1/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="../v1/css/sb-admin-2.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+  <input type="hidden" id="_id" value="0" name="_id">
+  <div class="container">
+
+    <!-- Outer Row -->
+    <div class="row justify-content-center">
+
+      <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+          <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+              <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">BIENVENIDO!</h1>
+                  </div>
+                  <div id="nologin" style="display: none">
+                  <form class="user">
+                    <div class="form-group">
+                      <input type="email" class="form-control form-control-user" id="email" aria-describedby="emailHelp" placeholder="Ingresa tu cuenta de usuario">
+                    </div>
+                    <div class="form-group">
+                      <input type="password" class="form-control form-control-user" id="pass" placeholder="Ingresa tu Contraseña">
+                    </div>
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox small">
+                        <input type="checkbox" class="custom-control-input" id="customCheck">
+                        <label class="custom-control-label" for="customCheck">Recordarme</label>
+                      </div>
+                    </div>
+                    <a href="#" Onclick="sendLogin()" class="btn btn-primary btn-user btn-block">
+                      Entrar
+                    </a>
+                    <hr>
+                    <!--
+                    <a href="index.html" class="btn btn-google btn-user btn-block">
+                      <i class="fab fa-google fa-fw"></i> Login with Google
+                    </a>
+                  -->
+                   <!--
+                    <a href="index.html" class="btn btn-facebook btn-user btn-block">
+                      <i class="fab fa-facebook-f fa-fw"></i> Login with Facebook
+                    </a>
+                  -->  
+                  </form>
+                  <div>
+
+                   <div id="silogin" style="display: none">
+
+                        <p>Estas Logeado</p>
+
+                   </div> 
+
+                  <hr>
+                  <div class="text-center">
+                    <a class="small" href="#">¿ No recuerdas tu contrasela ?</a>
+                  </div>
+                  <div class="text-center">
+                    <a class="small" href="#">Crear Cuenta!</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../v1/vendor/jquery/jquery.min.js"></script>
+  <script src="../v1/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="../v1/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="../v1/js/sb-admin-2.min.js"></script>
+
+</body>
+
+</html>
+
+
+<script>
+
+console.log(".................................")
+var token = localStorage.getItem('token')
+if (token)
+{
+  $('#nologin').hide()
+  $('#silogin').show();
+
+  var type = "GET";
+  var url  = "http://192.168.0.122:3001/api/product"
+  var data = "";
+  var rst = sendAJAXformApi_(type,url,data)
+  console.log("----------------------------------")
+  console.log(rst);
+
+}
+if (token === null)
+{
+  $('#nologin').show()
+  $('#silogin').hide();
+
+}
+
+function sendLogin()
+{
+
+   var email =  $('#email').val();
+   var pass  =  $('#pass').val();
+   
+    
+
+   var type = "post";
+   var url = "http://192.168.0.122:3001/api/signin";
+   data = {
+
+             "email" : email,
+             "pass"  : pass
+
+          }
+
+   var res = sendAJAXformApi(type,url,data);
+   if (res.token)
+   {
+         console.log(res.token); 
+         localStorage.setItem('token', res.token)      
+       
+   }
+   else
+  {
+       console.log("error");
+  }
+
+}
+
+
+function sendAJAXformApi_(type,url,data)
+{
+
+
+  var token = localStorage.getItem("token");
+
+ 
+ //try {   
+    var theResponse = null;
+    url = url,
+    $.ajax({
+      url: url,
+      type: type,
+      async : false,
+      //crossDomain: true,
+      //headers: headers,
+      //headers: { Authorization: $`Bearer ${localStorage.getItem("token")}` },
+     headers: {
+            'Authorization': `${token}`,
+        },      
+      data: data,
+      error: function(err) {
+        switch (err.status) {
+          case "400":
+            // bad request
+            break;
+          case "401":
+            // unauthorized
+            break;
+          case "403":
+            // forbidden
+            break;
+          case "422":
+            // datos repetidos
+            break; 
+          default:
+            error = err.responseText;
+            error = JSON.parse(error)
+            var html = "";
+            var t = error.errors.msg.length;
+            var html = "error";
+            break;
+
+        }
+      },
+      success: function(data) 
+      {
+
+        theResponse = data;
+      }
+
+    });
+    return theResponse;
+}
+
+
+
+function sendAJAXformApi(type,url,data)
+{
+
+ //try {   
+    var token = localStorage.getItem("token");
+    var theResponse = null;
+    url = url,
+    $.ajax({
+      url: url,
+      type: type,
+      async : false,
+      //headers: { Authorization: $`Bearer ${localStorage.getItem("token")}` },
+      //headers: { token: ` + token + ` },
+      data: data,
+      error: function(err) {
+        switch (err.status) {
+          case "400":
+            // bad request
+            break;
+          case "401":
+            // unauthorized
+            break;
+          case "403":
+            // forbidden
+            break;
+          case "422":
+            // datos repetidos
+            break; 
+          default:
+            error = err.responseText;
+            error = JSON.parse(error)
+            var html = "";
+            var t = error.errors.msg.length;
+            var html = "error";
+            /*
+            for (var i = 0; i < t; i++){ 
+            //console.log(total);
+                console.log(error.errors.msg[i].msg);
+                console.log(error.errors.msg[i].param);
+                html = html + "<i class='fas fa-exclamation-circle'></i> Campo<b> '" + error.errors.msg[i].param + "'</b>  " + error.errors.msg[i].msg + ".<br>";   
+            }
+            */
+            $("#msgerrorTXT").html(html);
+            //$('#msgerror').show();
+            $("#msgerror").slideUp( 300 ).delay( 800 ).fadeIn( 400 );
+            //$("#msgerror").slideUp( 1300 ).delay( 11800 ).fadeOut( 4400 );
+            $('#loading').hide();
+            $('#url').val($('#ord_url').val());
+            break;
+
+        }
+      },
+      success: function(data) 
+      {
+
+        theResponse = data;
+        if (type == "POST") theResponse = 1;
+      }
+
+    });
+    return theResponse;
+
+    /*
+    }
+    catch(err) {
+        $.messager.alert('ERROR', "No se pudo conectar con la API");
+        rst = [{_id:'error'}];
+        return rst;
+    }*/    
+
+}
+
+</script>
+

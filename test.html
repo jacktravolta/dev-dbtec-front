@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>DBTEC.cl - Login</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+</head>
+
+<body class="bg-gradient-primary">
+  <input type="hidden" id="_id" value="0" name="_id">
+  <div class="container">
+
+    
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="../v1/vendor/jquery/jquery.min.js"></script>
+</body>
+
+</html>
+
+
+<div id="bodyform">
+</div>  
+
+<script>
+
+function createform(cols,model)
+{
+
+    if (cols)
+    {
+        var dathtml = "" ;
+        var tmp = cols;
+        console.log(tmp)
+        var campo = [];
+        var title = [];
+        var validate = [];
+        var required = [];
+        var tipodato = [];
+        var url = [];
+
+
+              for (let i in tmp) {
+                  for (let j in tmp[i]) {
+                       campo[i] = tmp[i]['field'];
+                       title[i] = tmp[i]['title'];
+                       validate[i] = tmp[i]['validate'];
+                       required[i] = tmp[i]['required'];
+                       tipodato[i] = tmp[i]['tipodato'];
+                       url[i] = tmp[i]['url'];
+                  }
+              }
+
+
+              for (var i = 0; i < campo.length; i++) 
+              {
+                   var c = "";
+                   var t = "";
+                   var v = "";
+                   var td = "";
+                   var dop = "";
+                   var u = "";
+                   var w = "width:100%"
+                   c = campo[i];
+                   t = title[i];
+                   v = validate[i];
+                   r = required[i]; 
+                   td = tipodato[i];
+                   u = url[i];
+                   extpro = "input";
+                   v2 = "";
+                   v3 = "";
+                   
+                   if (td == "easyui-checkbox")
+                   {
+                      extpro = 'type="checkbox"';
+                      w = "width:10%"
+                   } 
+                   if (td == "easyui-textarea")
+                   {
+                      extpro = 'textarea';
+                      v2 = "</textarea>";
+                      v3 = "<div></div>";
+                   }
+                   if (td == "easyui-hidden")
+                   {
+                      if (c != "act")
+                      {  
+                            dathtml = dathtml + `
+                            <input type="hidden" name="`+ c +`" id="`+ c +`" >
+                            `;
+                      }       
+
+                      
+                   } 
+                   if (td != "easyui-combobox" && td != "easyui-hidden")
+                   { 
+                      if (c != "act")
+                      { 
+                          dathtml = dathtml + ` 
+                          <div class="col-sm-12">` + t +`<br>
+                          ` + v3 +  `
+                          <`+ extpro + ` id="` +  c + `" class="` + td +`" name="` + c + `" style="  ` + w + ` " 
+                          data-options="label:'',
+                          required:` + r + `,validType:'` +  v + `'"
+                          >` + v2 + `
+                          </div>
+                          `;
+                      }    
+
+                    } 
+
+                    if (td == "easyui-combobox")
+                    {
+                    
+                        type  = "GET"
+                        rst   = sendAJAXformApi(type,u,'')
+                        //console.log(rst);
+                    
+                         
+                        if (c == "country" ) 
+                        {
+                          rst = rst;
+                        }
+                        else{rst = rst.docs;}
+                        
+                        //rst = rst.docs;       
+                          
+
+                        var blist = "";
+                        var svalue = "";
+                        var sname = "";
+                        var sselect = "";
+
+                    
+                        for (var ii = 0; ii < rst.length; ii++) 
+                        {
+                         
+                            if (c == "country" )
+                            {
+                                      svalue = rst[ii].name;
+                                      sname  = rst[ii].name
+                                    }
+                                    else
+                                    {
+                                      svalue = rst[ii]._id;
+                                      sname  = rst[ii].name
+
+                                    } 
+
+                                    blist = blist + `
+                                    <option value=" `+ svalue +` ">` + sname + `</option>
+                                      `;
+                            }
+                                
+                                    dathtml = dathtml + ` 
+                                    <select class="easyui-combobox"  name="` +  c +`" id="` +  c +`" label="` + t + `" style="width:100%">
+                                    `+  blist+`
+                                    </select>`;
+
+                        } 
+
+                   //alert(model);
+                   
+                }
+             
+                    //model = "tsa_combustiblebitacoravuelos";
+                    if (model == "tsa_bitacoravuelo")
+                    { 
+
+                        var w = $('#w');
+                        w.window('resize',{width:'50%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/tsa_bitacoravuelo.html');
+                    }
+                    
+                    if (model == "tsa_rutabitacoravuelo")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/tsa_rutabitacoravuelo.html');
+                    }
+
+                    if (model == "tsa_combustiblebitacoravuelos")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/tsa_combustiblebitacoravuelos.html');
+
+                    }
+
+                    if (model == "tsa_pasajeroscargabitacoravuelos")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/tsa_pasajeroscargabitacoravuelos.html');
+
+                    }
+                     
+                    /* 
+                    if (model == "users")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/users.html');
+                        
+
+                    }
+                    */
+
+                    if (model == "tsa_aeronave")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/tsa_aeronave.html');
+                        
+
+                    }
+
+                    if (model == "tsa_tipoaeronave")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/tsa_tipoaeronave.html');
+                        
+
+                    }
+
+
+                    if (model == "tsa_notificaciones")
+                    {
+
+                        var w = $('#w');
+                        w.window('resize',{width:'25%',height:'auto'});
+
+                        $("#bodyform").html('');
+                        $("#bodyform").load('./template/notificaciones.html');
+                        
+
+                    }
+
+
+
+                    else
+                    {
+                        console.log(dathtml);
+                        $("#bodyform").html(dathtml);            
+                    }
+
+   
+   }
+}
+
+
+
+
+function sendAJAXformApi(type,url,data,headers)
+{
+
+ //try {   
+    var theResponse = null;
+    url = url,
+    $.ajax({
+      url: url,
+      type: type,
+      async : false,
+      headers: headers,
+      data: data,
+      error: function(err) {
+        switch (err.status) {
+          case "400":
+            // bad request
+            break;
+          case "401":
+            // unauthorized
+            break;
+          case "403":
+            // forbidden
+            break;
+          case "422":
+            // datos repetidos
+            break; 
+          default:
+            var html = "";
+            var t = error.errors.msg.length;
+            break;
+
+        }
+      },
+      success: function(data) 
+      {
+
+        theResponse = data;
+      }
+
+    });
+    return theResponse;
+
+    /*
+    }
+    catch(err) {
+        $.messager.alert('ERROR', "No se pudo conectar con la API");
+        rst = [{_id:'error'}];
+        return rst;
+    }*/    
+
+}
+
+
+let type = "GET";
+let url = "http://192.168.0.16:3003/api/v1/universal";
+let headers = { 
+
+      "Authorization": "",
+      "model" : "tsa_asignacionaerea",
+      "schema" : "1",
+      "token" : "",
+    }
+
+var data =  sendAJAXformApi(type,url,data,headers)
+createform(data,"users")
+</script>  
